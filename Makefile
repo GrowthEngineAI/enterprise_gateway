@@ -2,6 +2,13 @@
 # Distributed under the terms of the Modified BSD License.
 
 .PHONY: help build clean nuke dev dev-http docs install sdist test release clean-images clean-enterprise-gateway \
+    clean-kernel-images clean-enterprise-gateway \
+    clean-kernel-py clean-kernel-spark-py clean-kernel-tf-py clean-kernel-tf262-py \
+    clean-kernel-tf270-gpu-py clean-kernel-image-puller push-images \
+    push-kernel-images push-enterprise-gateway push-kernel-py push-kernel-spark-py \
+    push-kernel-tf-py push-kernel-tf-gpu-py push-kernel-tf262-py push-kernel-tf270-gpu-py push-kernel-image-puller publish helm-chart
+
+#.PHONY: help build clean nuke dev dev-http docs install sdist test release clean-images clean-enterprise-gateway \
     clean-demo-base clean-kernel-images clean-enterprise-gateway \
     clean-kernel-py clean-kernel-spark-py clean-kernel-r clean-kernel-spark-r clean-kernel-scala clean-kernel-tf-py \
     clean-kernel-tf-gpu-py clean-kernel-image-puller push-images push-enterprise-gateway-demo push-demo-base \
@@ -65,9 +72,13 @@ dev: ## Make a server in jupyter_websocket mode
 docs: ## Make HTML documentation
 	$(SA) $(ENV) && make -C docs html
 
-kernelspecs:  kernelspecs_all kernelspecs_yarn kernelspecs_conductor kernelspecs_kubernetes kernelspecs_docker kernel_image_files ## Create archives with sample kernelspecs
-kernelspecs_all kernelspecs_yarn kernelspecs_conductor kernelspecs_kubernetes kernelspecs_docker kernel_image_files:
+kernelspecs:  kernelspecs_all kernelspecs_kubernetes kernel_image_files ## Create archives with sample kernelspecs
+kernelspecs_all kernelspecs_kubernetes kernel_image_files:
 	make VERSION=$(VERSION) TAG=$(TAG) SPARK_VERSION=$(SPARK_VERSION) -C  etc $@
+
+#kernelspecs:  kernelspecs_all kernelspecs_yarn kernelspecs_conductor kernelspecs_kubernetes kernelspecs_docker kernel_image_files ## Create archives with sample kernelspecs
+#kernelspecs_all kernelspecs_yarn kernelspecs_conductor kernelspecs_kubernetes kernelspecs_docker kernel_image_files:
+#	make VERSION=$(VERSION) TAG=$(TAG) SPARK_VERSION=$(SPARK_VERSION) -C  etc $@
 
 install: ## Make a conda env with dist/jupyter_enterprise_gateway-*.whl and dist/jupyter_enterprise_gateway-*.tar.gz installed
 	-conda env remove -y -n $(ENV)-install
@@ -126,26 +137,35 @@ docker-images:  ## Build docker images (includes kernel-based images)
 kernel-images: ## Build kernel-based docker images
 
 # Actual working targets...
-docker-images: demo-base enterprise-gateway-demo kernel-images enterprise-gateway kernel-py kernel-spark-py kernel-r kernel-spark-r kernel-scala kernel-tf-py kernel-tf-gpu-py kernel-image-puller
+#docker-images: demo-base enterprise-gateway-demo kernel-images enterprise-gateway kernel-py kernel-spark-py kernel-r kernel-spark-r kernel-scala kernel-tf-py kernel-tf-gpu-py kernel-image-puller
+docker-images: kernel-images enterprise-gateway kernel-py kernel-spark-py kernel-tf-py kernel-tf-gpu-py kernel-tf262-py kernel-tf270-gpu-py kernel-image-puller
 
-enterprise-gateway-demo kernel-images enterprise-gateway kernel-py kernel-spark-py kernel-r kernel-spark-r kernel-scala kernel-tf-py kernel-tf-gpu-py kernel-image-puller:
+kernel-images enterprise-gateway kernel-py kernel-spark-py kernel-tf-py kernel-tf-gpu-py kernel-tf262-py kernel-tf270-gpu-py kernel-image-puller:
 	make WHEEL_FILE=$(WHEEL_FILE) VERSION=$(VERSION) NO_CACHE=$(NO_CACHE) TAG=$(TAG) SPARK_VERSION=$(SPARK_VERSION) -C etc $@
+
+#enterprise-gateway-demo kernel-images enterprise-gateway kernel-py kernel-spark-py kernel-r kernel-spark-r kernel-scala kernel-tf-py kernel-tf-gpu-py kernel-image-puller:
+#	make WHEEL_FILE=$(WHEEL_FILE) VERSION=$(VERSION) NO_CACHE=$(NO_CACHE) TAG=$(TAG) SPARK_VERSION=$(SPARK_VERSION) -C etc $@
 
 demo-base:
 	make WHEEL_FILE=$(WHEEL_FILE) VERSION=$(VERSION) NO_CACHE=$(NO_CACHE) TAG=$(SPARK_VERSION) SPARK_VERSION=$(SPARK_VERSION) -C etc $@
 
 # Here for doc purposes
-clean-images: clean-demo-base ## Remove docker images (includes kernel-based images)
+#clean-images: clean-demo-base ## Remove docker images (includes kernel-based images)
+clean-images: ## Remove docker images (includes kernel-based images)
 clean-kernel-images: ## Remove kernel-based images
 
-clean-images clean-enterprise-gateway-demo clean-kernel-images clean-enterprise-gateway clean-kernel-py clean-kernel-spark-py clean-kernel-r clean-kernel-spark-r clean-kernel-scala clean-kernel-tf-py clean-kernel-tf-gpu-py clean-kernel-image-puller:
+clean-images clean-kernel-images clean-enterprise-gateway clean-kernel-py clean-kernel-spark-py clean-kernel-tf-py clean-kernel-tf-gpu-py  clean-kernel-tf262-py clean-kernel-tf270-gpu-py clean-kernel-image-puller:
 	make WHEEL_FILE=$(WHEEL_FILE) VERSION=$(VERSION) TAG=$(TAG) -C etc $@
+
+#clean-images clean-enterprise-gateway-demo clean-kernel-images clean-enterprise-gateway clean-kernel-py clean-kernel-spark-py clean-kernel-r clean-kernel-spark-r clean-kernel-scala clean-kernel-tf-py clean-kernel-tf-gpu-py clean-kernel-image-puller:
+#	make WHEEL_FILE=$(WHEEL_FILE) VERSION=$(VERSION) TAG=$(TAG) -C etc $@
 
 clean-demo-base:
 	make WHEEL_FILE=$(WHEEL_FILE) VERSION=$(VERSION) TAG=$(SPARK_VERSION) -C etc $@
 
-push-images: push-demo-base
-push-images push-enterprise-gateway-demo push-kernel-images push-enterprise-gateway push-kernel-py push-kernel-spark-py push-kernel-r push-kernel-spark-r push-kernel-scala push-kernel-tf-py push-kernel-tf-gpu-py push-kernel-image-puller:
+#push-images: push-demo-base
+push-images: 
+push-images push-kernel-images push-enterprise-gateway push-kernel-py push-kernel-spark-py push-kernel-tf-py push-kernel-tf-gpu-py push-kernel-tf262-py push-kernel-tf270-gpu-py push-kernel-image-puller:
 	make WHEEL_FILE=$(WHEEL_FILE) VERSION=$(VERSION) TAG=$(TAG) -C etc $@
 
 push-demo-base:
