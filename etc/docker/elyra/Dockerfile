@@ -2,6 +2,8 @@
 ARG BASE_CONTAINER=elyra/elyra:dev
 FROM $BASE_CONTAINER
 
+USER root
+
 RUN apt-get update && \
     apt-get install -y --no-install-recommends fuse s3fs git curl wget unzip bzip2 build-essential ca-certificates && \
     export GCSFUSE_REPO=gcsfuse-`lsb_release -c -s` && \
@@ -10,6 +12,8 @@ RUN apt-get update && \
     apt-get -qq update && sudo apt-get install -y -qq gcsfuse && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+USER $NB_USER
 
 RUN pip install --upgrade \
     jupyterlab \
