@@ -5,7 +5,7 @@
     "process_proxy": {
       "class_name": "enterprise_gateway.services.processproxies.k8s.KubernetesProcessProxy",
       "config": {
-        "image_name": "elyra/kernel-tf-py:VERSION"
+        "image_name": "hub.gexcp.com/elyra/kernel-tf262-py:VERSION"
       }
     }
   },
@@ -22,5 +22,8 @@
     "{response_address}",
     "--RemoteProcessProxy.public-key",
     "{public_key}"
-  ]
+  ],
+  "resources": {
+    "logo-64x64": "/gateway/kernelspecs/kernel-tf262-py/logo-64x64.png"
+  }
 }

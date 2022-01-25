@@ -5,7 +5,7 @@
     "process_proxy": {
       "class_name": "enterprise_gateway.services.processproxies.k8s.KubernetesProcessProxy",
       "config": {
-        "image_name": "elyra/kernel-tf270-gpu-py:VERSION"
+        "image_name": "hub.gexcp.com/elyra/kernel-tf270-gpu-py:VERSION"
       }
     }
   },
@@ -22,5 +22,8 @@
     "{response_address}",
     "--RemoteProcessProxy.public-key",
     "{public_key}"
-  ]
+  ],
+  "resources": {
+    "logo-64x64": "/gateway/kernelspecs/kernel-tf270-gpu-py/logo-64x64.png"
+  }
 }
