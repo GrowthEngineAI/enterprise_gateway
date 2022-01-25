@@ -1,7 +1,4 @@
 
-
-ARG CUDA_VERSION=11.3
-ARG PYTHON_VERSION=1.10.0
 ARG BASE_CONTAINER=hub.gexcp.com/elyra/kernel-pt110-cuda113-py:latest
 FROM $BASE_CONTAINER
 
