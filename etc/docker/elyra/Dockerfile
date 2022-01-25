@@ -6,8 +6,7 @@ USER root
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends fuse s3fs git curl wget unzip bzip2 build-essential ca-certificates && \
-    export GCSFUSE_REPO="gcsfuse-$(lsb_release -c -s)" && \
-    echo "deb http://packages.cloud.google.com/apt $GCSFUSE_REPO main" | sudo tee /etc/apt/sources.list.d/gcsfuse.list && \
+    GCSFUSE_REPO="gcsfuse-$(lsb_release -c -s)" echo "deb http://packages.cloud.google.com/apt $GCSFUSE_REPO main" | sudo tee /etc/apt/sources.list.d/gcsfuse.list && \
     curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add - && \
     apt-get -qq update && sudo apt-get install -y -qq gcsfuse && \
     apt-get clean && \
