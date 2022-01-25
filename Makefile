@@ -20,12 +20,13 @@ SHELL:=/bin/bash
 
 VERSION?=3.0.0.dev0
 SPARK_VERSION?=2.4.6
+TAG:=latest
 
-ifeq (dev, $(findstring dev, $(VERSION)))
-    TAG:=dev
-else
-    TAG:=$(VERSION)
-endif
+#ifeq (dev, $(findstring dev, $(VERSION)))
+#    TAG:=dev
+#else
+#    TAG:=$(VERSION)
+#endif
 
 
 WHEEL_FILE:=dist/jupyter_enterprise_gateway-$(VERSION)-py2.py3-none-any.whl
