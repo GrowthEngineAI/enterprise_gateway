@@ -1,12 +1,13 @@
 
-ARG CUDA_VERSION=11.5
+ARG CUDA_VERSION=11.3
 ARG PYTORCH_VERSION=1.10.0
+ARG CUDA_IMAGE=hub.gexcp.com/nvidia/cuda:11.3.1-base-ubuntu20.04
 ARG BASE_CONTAINER=hub.gexcp.com/elyra/elyra:latest
 
-FROM $BASE_CONTAINER
+FROM $CUDA_IMAGE as BUILD
 
 RUN conda install -c pytorch -c conda-forge -c nvidia -y \
-    magma-cuda115 \
+    magma-cuda113 \
     pytorch=$PYTORCH_VERSION \
     astunparse \
     ninja pyyaml mkl mkl-include setuptools cmake cffi typing_extensions future six requests dataclasses \
@@ -21,3 +22,12 @@ RUN conda install -c pytorch -c conda-forge -c nvidia -y \
     conda clean -tipsy
 
 
+FROM $BASE_CONTAINER
+
+ENV CUDA_HOME=/usr/local/cuda
+ENV CUDA_ROOT=$CUDA_HOME
+ENV PATH=$PATH:$CUDA_ROOT/bin
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CUDA_ROOT/lib64
+
+COPY --from=build /usr/local/cuda $CUDA_HOME
+COPY --from=build /opt/conda/. $CONDA_DIR
