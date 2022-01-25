@@ -1,7 +1,7 @@
 
 ARG CUDA_VERSION=11.3
 ARG PYTORCH_VERSION=1.10.0
-ARG CUDA_IMAGE=hub.gexcp.com/nvidia/cuda:11.3.1-base-ubuntu20.04
+ARG CUDA_IMAGE=hub.gexcp.com/docker/nvidia/cuda:11.3.1-base-ubuntu20.04
 ARG BASE_CONTAINER=hub.gexcp.com/elyra/elyra:latest
 
 FROM $CUDA_IMAGE as BUILD
