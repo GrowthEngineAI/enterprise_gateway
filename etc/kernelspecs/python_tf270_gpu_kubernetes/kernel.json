@@ -22,8 +22,5 @@
     "{response_address}",
     "--RemoteProcessProxy.public-key",
     "{public_key}"
-  ],
-  "resources": {
-    "logo-64x64": "/gateway/kernelspecs/kernel-tf270-gpu-py/logo-64x64.png"
-  }
+  ]
 }

@@ -1,11 +1,11 @@
 {
   "language": "python",
-  "display_name": "Tensorflow 2.6.2",
+  "display_name": "PyTorch 1.10 / Cuda 11.3",
   "metadata": {
     "process_proxy": {
       "class_name": "enterprise_gateway.services.processproxies.k8s.KubernetesProcessProxy",
       "config": {
-        "image_name": "hub.gexcp.com/elyra/kernel-tf262-py:VERSION"
+        "image_name": "hub.gexcp.com/elyra/kernel-pt110-cuda113-py:VERSION"
       }
     }
   },
@@ -13,7 +13,7 @@
   },
   "argv": [
     "python",
-    "/usr/local/share/jupyter/kernels/python_tf262_kubernetes/scripts/launch_kubernetes.py",
+    "/usr/local/share/jupyter/kernels/python_pt110_cuda113_kubernetes/scripts/launch_kubernetes.py",
     "--RemoteProcessProxy.kernel-id",
     "{kernel_id}",
     "--RemoteProcessProxy.port-range",

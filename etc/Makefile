@@ -4,6 +4,7 @@
 .PHONY: help clean clean-images clean-elyra clean-enterprise-gateway clean-enterprise-gateway-demo clean-demo-base \
     clean-kernel-images clean-py clean-tf-py clean-tf-gpu-py clean-r clean-spark-r \
 	clean-tf-gpu-py clean-tf262-py clean-tf270-gpu-py \
+	clean-pt110-cuda113-py clean-pt110-ds-apex-py \
 	clean-scala toree-launcher \
     kernelspecs_all kernelspecs_yarn kernelspecs_conductor kernelspecs_kubernetes kernelspecs_docker clean-kernel-image-puller
 
@@ -57,13 +58,14 @@ TOREE_LAUNCHER_FILES:=$(shell find kernel-launchers/scala/toree-launcher/src -ty
 	@echo ../build/kernelspecs/spark_R_{conductor*,yarn*} | xargs -t -n 1 cp -r kernel-launchers/R/scripts
 	@echo ../build/kernelspecs/spark_scala_{conductor*,yarn*} | xargs -t -n 1 cp -r kernel-launchers/scala/lib
 	# Container-based kernelspecs just get the container launchers
-	@echo ../build/kernelspecs/{python,R,scala,python_tf,python_tf_gpu,python_tf262,python_tf270_gpu}_kubernetes | xargs -t -n 1 cp -r kernel-launchers/kubernetes/*
+	@echo ../build/kernelspecs/{python,R,scala,python_tf,python_tf_gpu,python_tf262,python_tf270_gpu,python_pt110_cuda113,python_pt110_ds_apex}_kubernetes | xargs -t -n 1 cp -r kernel-launchers/kubernetes/*
 	@echo ../build/kernelspecs/{python,R,scala,python_tf,python_tf_gpu}_docker | xargs -t -n 1 cp -r kernel-launchers/docker/*
         # Populate kernel resources.  Because tensorflow is also python, it should be last.
 	@echo ../build/kernelspecs/*R* | xargs -t -n 1 cp -r kernel-resources/ir/*
 	@echo ../build/kernelspecs/*scala* | xargs -t -n 1 cp -r kernel-resources/apache_toree/*
 	@echo ../build/kernelspecs/*python* | xargs -t -n 1 cp -r kernel-resources/python/*
 	@echo ../build/kernelspecs/*tf* | xargs -t -n 1 cp -r kernel-resources/tensorflow/*
+	@echo ../build/kernelspecs/*pt* | xargs -t -n 1 cp -r kernel-resources/pytorch/*
     # Perform the copy again to enable local, per-kernel, overrides
 	cp -r kernelspecs ../build
 	@(cd ../build/kernelspecs; find . -name 'kernel.json' -print0 | xargs -0 sed -i.bak "s/VERSION/$(TAG)/g"; find . -name *.bak -print0 | xargs -0 rm -f)
@@ -105,17 +107,17 @@ kernel_image_files: ../build/kernel_image_files
 # Docker image build section ***********************************************
 #
 
-KERNEL_IMAGES := kernel-py kernel-spark-py kernel-r kernel-spark-r kernel-scala kernel-tf-py kernel-tf-gpu-py kernel-tf262-py kernel-tf270-gpu-py
+KERNEL_IMAGES := kernel-py kernel-spark-py kernel-r kernel-spark-r kernel-scala kernel-tf-py kernel-tf-gpu-py kernel-tf262-py kernel-tf270-gpu-py kernel-pt110-cuda113-py kernel-pt110-ds-apex-py
 DOCKER_IMAGES := elyra demo-base enterprise-gateway-demo enterprise-gateway kernel-image-puller $(KERNEL_IMAGES)
 PUSHED_IMAGES := elyra demo-base enterprise-gateway-demo enterprise-gateway kernel-image-puller $(KERNEL_IMAGES)
 
 docker-images: $(DOCKER_IMAGES)
 kernel-images: $(KERNEL_IMAGES)
 
-push-images: push-enterprise-gateway-demo push-enterprise-gateway push-kernel-py push-kernel-spark-py push-kernel-tf-py push-kernel-tf262-py push-kernel-tf270-gpu-py push-kernel-r push-kernel-spark-r push-kernel-scala push-kernel-image-puller
+push-images: push-enterprise-gateway-demo push-enterprise-gateway push-kernel-py push-kernel-spark-py push-kernel-tf-py push-kernel-tf262-py push-kernel-tf270-gpu-py push-kernel-pt110-cuda113-py push-kernel-pt110-ds-apex-py push-kernel-r push-kernel-spark-r push-kernel-scala push-kernel-image-puller
 
 clean-images: clean-enterprise-gateway-demo clean-demo-base clean-enterprise-gateway clean-kernel-image-puller clean-kernel-images
-clean-kernel-images: clean-kernel-py clean-kernel-spark-py clean-kernel-tf-py clean-kernel-tf-gpu-py clean-kernel-tf262-py clean-kernel-tf270-gpu-py clean-kernel-r clean-kernel-spark-r clean-kernel-scala
+clean-kernel-images: clean-kernel-py clean-kernel-spark-py clean-kernel-tf-py clean-kernel-tf-gpu-py clean-kernel-tf262-py clean-kernel-tf270-gpu-py clean-kernel-r clean-kernel-spark-r clean-kernel-scala clean-kernel-pt110-cuda113-py clean-kernel-pt110-ds-apex-py
 
 # Extra dependencies for each docker image...
 DEPENDS_demo-base:
@@ -123,7 +125,7 @@ DEPENDS_elyra:
 DEPENDS_enterprise-gateway-demo: $(FILE_kernelspecs_all)
 DEPENDS_enterprise-gateway: $(FILE_kernelspecs_all)
 DEPENDS_kernel-image-puller:
-DEPENDS_kernel-py DEPENDS_kernel-spark-py DEPENDS_kernel-r DEPENDS_kernel-spark-r DEPENDS_kernel-scala DEPENDS_kernel-tf-py DEPENDS_kernel-tf-gpu-py DEPENDS_kernel-tf262-py DEPENDS_kernel-tf270-gpu-py: $(FILE_kernelspecs_kubernetes) $(FILE_kernelspecs_docker)
+DEPENDS_kernel-py DEPENDS_kernel-spark-py DEPENDS_kernel-r DEPENDS_kernel-spark-r DEPENDS_kernel-scala DEPENDS_kernel-tf-py DEPENDS_kernel-tf-gpu-py DEPENDS_kernel-tf262-py DEPENDS_kernel-tf270-gpu-py DEPENDS_kernel-pt110-cuda113-py DEPENDS_kernel-pt110-ds-apex-py: $(FILE_kernelspecs_kubernetes) $(FILE_kernelspecs_docker)
 
 # Extra targets for each docker image...
 TARGETS_demo-base:
@@ -131,7 +133,7 @@ TARGETS_elyra:
 TARGETS_kernel-image-puller:
 TARGETS_enterprise-gateway TARGETS_enterprise-gateway-demo: kernelspecs
 	@make -C .. bdist
-TARGETS_kernel-py TARGETS_kernel-spark-py TARGETS_kernel-r TARGETS_kernel-spark-r TARGETS_kernel-scala TARGETS_kernel-tf-py TARGETS_kernel-tf-gpu-py TARGETS_kernel-tf262-py TARGETS_kernel-tf270-gpu-py: kernelspecs
+TARGETS_kernel-py TARGETS_kernel-spark-py TARGETS_kernel-r TARGETS_kernel-spark-r TARGETS_kernel-scala TARGETS_kernel-tf-py TARGETS_kernel-tf-gpu-py TARGETS_kernel-tf262-py TARGETS_kernel-tf270-gpu-py TARGETS_kernel-pt110-cuda113-py TARGETS_kernel-pt110-ds-apex-py: kernelspecs
 
 # Extra files for each docker image...
 FILES_demo-base :=
@@ -145,6 +147,8 @@ FILES_kernel-tf-py := ../dist/jupyter_enterprise_gateway_kernel_image_files*
 FILES_kernel-tf-gpu-py := ../dist/jupyter_enterprise_gateway_kernel_image_files*
 FILES_kernel-tf262-py := ../dist/jupyter_enterprise_gateway_kernel_image_files*
 FILES_kernel-tf270-gpu-py := ../dist/jupyter_enterprise_gateway_kernel_image_files*
+FILES_kernel-pt110-cuda113-py := ../dist/jupyter_enterprise_gateway_kernel_image_files*
+FILES_kernel-pt110-ds-apex-py := ../dist/jupyter_enterprise_gateway_kernel_image_files*
 FILES_kernel-r := ../dist/jupyter_enterprise_gateway_kernel_image_files*
 FILES_kernel-spark-r := ../dist/jupyter_enterprise_gateway_kernel_image_files*
 FILES_kernel-scala := ../dist/jupyter_enterprise_gateway_kernel_image_files*
